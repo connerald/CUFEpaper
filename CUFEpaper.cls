@@ -37,6 +37,9 @@
 \RequirePackage{float} % 浮动体支持
 \RequirePackage{tabularx} % 表格支持
 \RequirePackage{makecell} % 表格单元格支持
+\RequirePackage{nameref} % 引用标题名称
+\RequirePackage{listings} % 代码高亮支持
+\RequirePackage{xcolor} % 颜色支持
 \RequirePackage[
   backend=biber,
   style=gb7714-2015ay,

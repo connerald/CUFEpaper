@@ -46,10 +46,10 @@
   gbalign=right,
   gbcitelabel=parensqj
 ]{biblatex} % 作者-年份制引文，编号制参考文献
-\addbibresource{references.bib} % 指定参考文献数据库文件
+\addbibresource{bib/references.bib} % 指定参考文献数据库文件
 
 % 字体设置
-\setCJKmainfont[AutoFakeBold=3]{simsun.ttc}
+\setCJKmainfont[AutoFakeBold=3]{fonts/simsun.ttc}
 \setmainfont{Times New Roman} % 修改mainfont为Times New Roman 否则默认的字体为弯尾版本
 
 \pagestyle{plain} % 只显示页码，不显示页眉

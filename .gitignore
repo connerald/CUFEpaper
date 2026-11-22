@@ -359,10 +359,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Microsoft Office temporary files
-~$*
-
-# macOS (github/gitignore: Global/macOS.gitignore)
 # General
 .DS_Store
 .localized
@@ -421,7 +417,6 @@ Backups.backupdb
 MobileBackups.trash
 tmbootpicker.efi
 
-# Linux (github/gitignore: Global/Linux.gitignore)
 *~
 
 # temporary files which can be created if a process still has a handle open of a deleted file

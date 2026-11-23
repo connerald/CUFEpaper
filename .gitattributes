@@ -1,0 +1,20 @@
+* text=auto
+
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.tex text eol=lf
+*.cls text eol=lf
+*.sty text eol=lf
+*.bib text eol=lf
+*.md text eol=lf
+LICENSE text eol=lf
+
+*.pdf binary
+*.doc binary
+*.docx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ttc binary
+*.ttf binary
+*.otf binary

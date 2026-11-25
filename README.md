@@ -7,7 +7,7 @@
 | 课程论文、报告或案例分析 | 编辑 [CUFEpaper.tex](CUFEpaper.tex)，可先看[课程论文 PDF 示例](CUFEpaper.pdf)。 |
 | 本科毕业论文（undergraduate thesis） | LaTeX 入口待开发。现阶段可查阅[教务处格式要求、封面和声明](docs/template-sources/undergraduate-thesis/本科毕业论文材料（2025届及以后）/)及[知网学生端 Word 示例](docs/template-sources/undergraduate-thesis/cnki/中央财经大学通用本科生毕业论文（设计）模板.docx)。 |
 
-本模板遵循 LaTeX Project Public License (LPPL)，允许自由使用、分发和修改，但请保留本版权声明。  
+本模板代码遵循 LaTeX Project Public License (LPPL)，允许自由使用、分发和修改，但请保留本版权声明。字体文件适用各自的许可。
 本模板按“原样”提供，不附带任何明示或暗示的担保，包括但不限于适销性或特定用途适用性的担保。使用本模板所产生的任何后果，作者不承担任何责任。  
 
 ## 课程论文使用方法
@@ -24,7 +24,7 @@
 
 ## 编译说明
 
-本模板推荐使用 XeLaTeX + Biber 的编译方式。
+使用 XeLaTeX 和 Biber 编译 `CUFEpaper.tex`，请保留 [fonts/](fonts/) 中的七个字体文件及其原名。
 
 如果你使用 **TeXstudio**，可以在“选项” → “配置 TeXstudio” → “构建” → “用户命令”中添加如下自定义编译链：
 

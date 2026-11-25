@@ -21,7 +21,7 @@
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{CUFEpaper}[2025/05/08 CUFE Paper Class]
-\LoadClass[12pt,a4paper]{ctexart}
+\LoadClass[12pt,a4paper,fontset=none]{ctexart}
 \RequirePackage[heading=true]{ctex}  % 中文支持
 \RequirePackage[top=2.54cm, bottom=2.54cm, left=2.5cm, right=2.5cm]{geometry} % 页边距
 \RequirePackage{graphicx} % 插图支持
@@ -48,13 +48,25 @@
 ]{biblatex} % 作者-年份制引文，编号制参考文献
 \addbibresource{bib/references.bib} % 指定参考文献数据库文件
 
-% 字体设置
-\setCJKmainfont[
-    Path = fonts/,
-    Extension = .ttc,
-    AutoFakeBold = 3
-]{simsun}
-\setmainfont{Times New Roman} % 修改mainfont为Times New Roman 否则默认的字体为弯尾版本
+% 正文与中文字体切换命令共用同一组项目字体。
+\renewcommand{\CJKrmdefault}{zhsong}
+\renewcommand{\CJKsfdefault}{zhhei}
+\renewcommand{\CJKttdefault}{zhsong}
+\setCJKmainfont[Path=fonts/, FontIndex=0, AutoFakeBold=3]{simsun.ttc}
+\setCJKsansfont[Path=fonts/]{simhei.ttf}
+\setCJKfamilyfont{zhkai}[Path=fonts/]{simkai.ttf}
+\providecommand{\songti}{\CJKfamily{zhsong}}
+\providecommand{\heiti}{\CJKfamily{zhhei}}
+\providecommand{\kaishu}{\CJKfamily{zhkai}}
+\setmainfont[
+    Path=fonts/,
+    BoldFont=timesbd.ttf,
+    ItalicFont=timesi.ttf,
+    BoldItalicFont=timesbi.ttf
+]{times.ttf}
+\newfontfamily\CUFEcoverlatin[Path=fonts/]{simkai.ttf}
+% ① 至 ⑩ 由当前中文字体排印。
+\xeCJKDeclareCharClass{CJK}{"2460 -> "2469}
 
 \pagestyle{plain} % 只显示页码，不显示页眉
 
@@ -113,8 +125,8 @@
       \vspace*{2\baselineskip}
       \includegraphics[width=0.65\textwidth]{figures/logo/school_logo.png}\par
     } % 这里完全参照中央财经大学课程论文、报告、案例分析考核封面
-    % 封面表格部分，楷体小四号，双倍行距
-    {\kaishu\fontsize{14pt}{18pt}\selectfont
+    % 考核封面的中西文填写栏均用楷体四号。
+    {\kaishu\CUFEcoverlatin\fontsize{14pt}{18pt}\selectfont
       \vspace{1\baselineskip}
       \renewcommand{\baselinestretch}{2.0}\selectfont
       学年学期：\CenterUnderlineBox[8cm]{\@term}\\

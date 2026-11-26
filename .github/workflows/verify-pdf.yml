@@ -24,7 +24,7 @@ jobs:
         working-directory: ${{ runner.temp }}
         run: |
           $PSNativeCommandUseErrorActionPreference = $true
-          Invoke-WebRequest "$env:TEXLIVE_REPO/install-tl.zip" -OutFile install-tl.zip
+          curl --fail --location --silent --show-error --retry 3 --output install-tl.zip "$env:TEXLIVE_REPO/install-tl.zip"
           $expected = '1a046a96d1cb810546dacb4b1e31499c4256a4d978189d3a23b09274074a2c22cb9b8ec2dc150ff0a761e8f4ed2af609c929baa0f3ca051ea05430bab4051a14'
           if ((Get-FileHash install-tl.zip -Algorithm SHA512).Hash -ne $expected) {
             throw 'TeX Live installer checksum mismatch'

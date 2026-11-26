@@ -1,0 +1,88 @@
+name: Verify PDF layout
+
+on: push
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build PDF on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    env:
+      # Biber 2.22's macOS build cannot load the template's Chinese collation rules.
+      TEXLIVE_REPO: https://texlive.info/tlnet-archive/2026/04/01/tlnet
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install TeX Live 2026 (scheme-basic)
+        shell: pwsh
+        working-directory: ${{ runner.temp }}
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $true
+          Invoke-WebRequest "$env:TEXLIVE_REPO/install-tl.zip" -OutFile install-tl.zip
+          $expected = '1a046a96d1cb810546dacb4b1e31499c4256a4d978189d3a23b09274074a2c22cb9b8ec2dc150ff0a761e8f4ed2af609c929baa0f3ca051ea05430bab4051a14'
+          if ((Get-FileHash install-tl.zip -Algorithm SHA512).Hash -ne $expected) {
+            throw 'TeX Live installer checksum mismatch'
+          }
+          cmake -E tar xf install-tl.zip
+          $installer = (Get-Item install-tl-*/install-tl).DirectoryName
+          $destination = Join-Path $env:RUNNER_TEMP texlive
+          $options = @('-no-gui', '-no-interaction', '-portable', '-scheme', 'scheme-basic',
+                       '-no-doc-install', '-no-src-install', '-texdir', $destination,
+                       '-repository', $env:TEXLIVE_REPO)
+          if ($IsWindows) {
+            & "$installer/install-tl-windows.bat" @options
+          } else {
+            perl "$installer/install-tl" @options
+          }
+          (Get-ChildItem "$destination/bin" -Directory).FullName >> $env:GITHUB_PATH
+
+      - name: Install template dependencies
+        run: >-
+          tlmgr --repository "${{ env.TEXLIVE_REPO }}" install
+          latexmk xetex ctex xecjk fontspec geometry graphics titlesec zhnumber
+          fancyhdr amsmath amsfonts hyperref setspace float tools makecell listings
+          xcolor biber biblatex biblatex-gb7714-2015 xstring
+
+      - name: Compile the course paper
+        run: latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error -outdir=build CUFEpaper.tex
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: paper-${{ runner.os }}
+          path: build/CUFEpaper.pdf
+          if-no-files-found: error
+
+  compare:
+    name: Compare PDF layout against macOS
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: paper-*
+          path: artifacts
+
+      - name: Install PDF comparison tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y poppler-utils python3-pil python3-pypdf
+
+      - name: Compare every page at 144 DPI
+        id: compare
+        shell: bash
+        run: /usr/bin/python3 .github/scripts/compare_pdfs.py artifacts differences | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload annotated differences
+        if: failure() && steps.compare.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: layout-differences
+          path: differences/*.png
+          if-no-files-found: ignore

@@ -93,23 +93,34 @@
 % 功能：定宽下划线，内容居中，防止内容向左溢出
 \def\CenterUnderlineBox[#1]#2{\underline{\hbox to #1{\hfil#2\hfil}}}
 
+% Word 的 22 磅对应 22bp。先选字号，再固定普通段落的基线距离。
+\newdimen\CUFE@line
+\CUFE@line=22bp
+\newcommand*\CUFEfixedleading{%
+  \linespread{1}\fontsize{\f@size}{\CUFE@line}\selectfont}
+
+\AddToHook{begindocument/end}{%
+  \let\CUFE@originalstretch\baselinestretch
+  \AddToHook{cmd/normalsize/after}{\CUFEfixedleading}%
+  \CUFEfixedleading}
+
 % === 中文 section 标题设置 ===
 \ctexset{
   section = {
-    format = {\zihao{4}\bfseries\centering},
+    format = {\zihao{4}\bfseries\CUFEfixedleading\centering},
     name = {,、},           % “一、”
     aftername={\hspace{0pt}},
     number = \chinese{section}
   },
   subsection = {
-    format = {\zihao{-4}\bfseries},
+    format = {\zihao{-4}\bfseries\CUFEfixedleading},
     name = {（,）},         % “（一）”
     aftername={\hspace{0pt}},
     number = \chinese{subsection},
     indent = 2em
   },
   subsubsection = {
-    format = {\zihao{-4}},
+    format = {\zihao{-4}\CUFEfixedleading},
     name = {},
     aftername={\hspace{0.5em}},
     number = {\arabic{subsubsection}.}, % “1.”
@@ -120,6 +131,7 @@
 % 封面
 \newcommand{\makecover}{%
   \begin{titlepage}
+    \linespread{\CUFE@originalstretch}\selectfont
     \centering
     {\songti\fontsize{14pt}{22pt}\selectfont
       \vspace*{2\baselineskip}
@@ -150,13 +162,13 @@
 }
 
 \renewenvironment{abstract}{%
-  \begin{center}
+  \begin{center}\linespread{\CUFE@originalstretch}\selectfont
     {\heiti\zihao{2} \@papertitle \par} % 论文标题，黑体二号
     \vspace{1.5cm}
     {\zihao{3}\bfseries 内\quad 容\quad 摘\quad 要 \par} % 内容摘要，宋体三号加粗
     \vspace{0.5cm}
   \end{center}
-  \renewcommand{\baselinestretch}{1.5}\selectfont % 摘要内容行距1.5倍
+  \CUFEfixedleading
   \par
 }{
   \par
@@ -167,37 +179,38 @@
 \newcommand{\makeenabstract}[2]{%
   \clearpage
   \thispagestyle{empty}
-  \begin{center}
+  \begin{center}\linespread{\CUFE@originalstretch}\selectfont
     {\heiti\zihao{2} \@papertitle \par}
     \vspace{1.5cm}
     {\rmfamily\zihao{3}\bfseries ABSTRACT \par}
     \vspace{0.5cm}
   \end{center}
-  \renewcommand{\baselinestretch}{1.5}\selectfont
-  {\rmfamily\zihao{-4}
-    \par
-    #1
+  {\rmfamily\zihao{-4}\CUFEfixedleading
+    #1\par
+    \textbf{KEYWORDS:} #2\par
   }
-  \par
-  \textbf{KEYWORDS:} #2
   \clearpage
 }
 
 % 目录页设置
 \ctexset{
-  contentsname = {\zihao{3}\bfseries 目\qquad 录}, % 目录标题内容（两个全角空格）
+  contentsname = {\zihao{3}\bfseries\CUFEfixedleading 目\qquad 录},
   tocdepth = {2}, % 目录深度 显示到二级标题
 }
 
+% titletoc 分组排标题文字，整条目录与四号标题都要指定行距。
 % 一级标题目录样式
-\titlecontents{section}[0pt]{\addvspace{0pt}\filright}%
-  {\zihao{4}\bfseries\contentspush{\thecontentslabel\ }}%
-  {}{\titlerule*[6pt]{·}\contentspage}
+\titlecontents{section}[0pt]{\addvspace{0pt}\filright\CUFEfixedleading}%
+  {\zihao{4}\bfseries\CUFEfixedleading\contentspush{\thecontentslabel\ }}%
+  {\zihao{4}\bfseries\CUFEfixedleading}{\titlerule*[6pt]{·}\contentspage}
 
 % 二级标题目录样式
-\titlecontents{subsection}[2em]{\addvspace{0pt}\filright}%
-  {\zihao{4}\contentspush{\thecontentslabel\ }}%
+\titlecontents{subsection}[2em]{\addvspace{0pt}\filright\CUFEfixedleading}%
+  {\zihao{4}\CUFEfixedleading\contentspush{\thecontentslabel\ }}%
   {}{\titlerule*[6pt]{·}\contentspage}
+
+% 条目内固定 22 磅，条目之间沿用参考文献样式的段距。
+\renewcommand*\bibfont{\normalfont\normalsize\CUFEfixedleading}
 
 % 参考文献页设置
 \ctexset{

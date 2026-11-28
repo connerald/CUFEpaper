@@ -99,10 +99,23 @@
 \newcommand*\CUFEfixedleading{%
   \linespread{1}\fontsize{\f@size}{\CUFE@line}\selectfont}
 
+% 编号的独立公式用于后文引用，公式与正文之间各空一行。
+\newcommand*\CUFE@equationspacing{%
+  \abovedisplayskip=\CUFE@line
+  \belowdisplayskip=\CUFE@line
+  \abovedisplayshortskip=\CUFE@line
+  \belowdisplayshortskip=\CUFE@line}
+\newcommand*\CUFE@numbereddisplay[1]{\AddToHook{env/#1/begin}{\CUFE@equationspacing}}
+\forcsvlist{\CUFE@numbereddisplay}{equation,align,alignat,xalignat,flalign,gather,multline,eqnarray}
 \AddToHook{begindocument/end}{%
   \let\CUFE@originalstretch\baselinestretch
   \AddToHook{cmd/normalsize/after}{\CUFEfixedleading}%
   \CUFEfixedleading}
+
+% 图表整体与正文之间留一行，适用于就地、页顶和页底浮动体。
+\setlength{\intextsep}{\CUFE@line}
+\setlength{\textfloatsep}{\CUFE@line}
+\setlength{\dbltextfloatsep}{\CUFE@line}
 
 % === 中文 section 标题设置 ===
 \ctexset{
@@ -127,6 +140,12 @@
     indent = 2em
   }
 }
+\titlespacing{\section}{0pt}{\CUFE@line}{\CUFE@line}
+\titlespacing{\subsection}{2em}{0pt}{0pt}
+\titlespacing{\subsubsection}{2em}{0pt}{0pt}
+% 四、五级标题保留原来的缩进和同行间距，只取消标题前的额外空白。
+\titlespacing{\paragraph}{0pt}{0pt}{1em}
+\titlespacing{\subparagraph}{\parindent}{0pt}{1em}
 
 % 封面
 \newcommand{\makecover}{%
@@ -159,6 +178,10 @@
 \newcommand*\CUFE@centeredheading[2]{%
   \par{\centering #1\CUFEfixedleading #2\par}%
   \addvspace{\CUFE@line}}
+
+\newcommand*\makepapertitle{%
+  \clearpage
+  \CUFE@centeredheading{\zihao{-3}\bfseries}{\@papertitle}}
 
 \renewenvironment{abstract}{%
   \CUFEfixedleading

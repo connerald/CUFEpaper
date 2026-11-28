@@ -224,11 +224,14 @@
 \renewcommand*\bibfont{\normalfont\normalsize\CUFEfixedleading}
 
 % 参考文献页设置
-\ctexset{
-  bibname = {\zihao{4}\bfseries 参考文献}, % 参考文献标题内容
-}
+\ctexset{bibname = 参考文献}
 
 \renewcommand{\mkgbnumlabel}[1]{[{#1}].} % 设置用[]包裹序号并加. 例如[1].
 
-\defbibheading{bibliography}[\bibname]{%
-  \section*{#1\vspace*{12pt}}}
+\newcommand*\CUFE@bibheading[1]{%
+  \par\addvspace{2\CUFE@line}%
+  \section*{#1}}
+\defbibheading{bibliography}[\bibname]{\CUFE@bibheading{#1}}
+\defbibheading{bibintoc}[\bibname]{%
+  \CUFE@bibheading{\phantomsection#1}%
+  \addcontentsline{toc}{section}{#1}}

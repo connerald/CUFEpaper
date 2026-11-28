@@ -155,41 +155,28 @@
   \end{titlepage}
 }
 
-% 摘要页设置
-% 中文摘要页（重定义abstract环境）
-\ctexset{
-  abstractname={\zihao{3}\bfseries 内\quad 容\quad 摘\quad 要}, % 摘要标题
-}
+% 独立标题的末行和下文首行之间留一个空行。
+\newcommand*\CUFE@centeredheading[2]{%
+  \par{\centering #1\CUFEfixedleading #2\par}%
+  \addvspace{\CUFE@line}}
 
 \renewenvironment{abstract}{%
-  \begin{center}\linespread{\CUFE@originalstretch}\selectfont
-    {\heiti\zihao{2} \@papertitle \par} % 论文标题，黑体二号
-    \vspace{1.5cm}
-    {\zihao{3}\bfseries 内\quad 容\quad 摘\quad 要 \par} % 内容摘要，宋体三号加粗
-    \vspace{0.5cm}
-  \end{center}
   \CUFEfixedleading
-  \par
-}{
-  \par
-  \clearpage
-}
+  {\centering\heiti\zihao{2}\CUFEfixedleading \@papertitle\par}%
+  % 题名至“内容摘要”沿用旧模板的 1.5 cm 留白和三号标题字行。
+  \vspace{1.5cm}%
+  {\centering\linespread{\CUFE@originalstretch}\zihao{3}\bfseries 内\quad 容\quad 摘\quad 要\par}%
+  \addvspace{\CUFE@line}%
+}{\par}
 
-% 英文摘要页（可选）
+% 中文关键词之后空一行接排英文摘要，较长的摘要自然续页。
 \newcommand{\makeenabstract}[2]{%
-  \clearpage
-  \thispagestyle{empty}
-  \begin{center}\linespread{\CUFE@originalstretch}\selectfont
-    {\heiti\zihao{2} \@papertitle \par}
-    \vspace{1.5cm}
-    {\rmfamily\zihao{3}\bfseries ABSTRACT \par}
-    \vspace{0.5cm}
-  \end{center}
+  \par\addvspace{\CUFE@line}%
   {\rmfamily\zihao{-4}\CUFEfixedleading
+    \CUFE@centeredheading{\zihao{3}\bfseries}{ABSTRACT}%
     #1\par
-    \textbf{KEYWORDS:} #2\par
+    \textbf{KEY WORDS:} #2\par
   }
-  \clearpage
 }
 
 % 目录页设置
@@ -197,6 +184,7 @@
   contentsname = {\zihao{3}\bfseries\CUFEfixedleading 目\qquad 录},
   tocdepth = {2}, % 目录深度 显示到二级标题
 }
+\AddToHook{cmd/tableofcontents/before}{\clearpage}
 
 % titletoc 分组排标题文字，整条目录与四号标题都要指定行距。
 % 一级标题目录样式
